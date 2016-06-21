@@ -1,0 +1,46 @@
+
+table
+  collect_results do
+    tr
+      td
+        text 'hi'
+  end
+
+table
+  tr+ -> [ date, description, amount ]
+    td date: /{date_regex}/
+    td description: /.+/
+    td amount: /\$(\d+\.\d{2})/, caputre: 1
+
+[
+ [ date, description, amount],
+ [ date, description, amount],
+ [ date, description, amount],
+ [ date, description, amount],
+ ...
+ { total: 1000.40 }
+]
+
+saxish = <<-SAXISH
+table
+  thead?
+  tbody?
+    tr
+      td /Date/
+      td /Description/
+      td /Amount/
+    tr+ (a)-> [ date, description, amount ]
+      td date: /{date_regex}/
+      td description: /.+/
+      td amount: /\$(\d+\.\d{2})/, capture: 1
+    tr (b)-> { "total" => total }
+      td
+      td /Total/
+      td total: /\$(\d+\.\d{2})/, capture: 1
+SAXISH
+
+callbacks = {
+  a: ->(thing) { $stderr.puts thing }
+  b: ->(total_thing) { puts "Total: {%total%}", total_thing }
+}
+document = Saxinator.new(saxish, callbacks)
