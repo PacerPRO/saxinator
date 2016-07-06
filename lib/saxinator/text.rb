@@ -21,7 +21,10 @@ module Saxinator
 
     def child_failed(state_machine)
       match_results = @buffer.match(@pattern)
-      raise ParseFailureException, "Failed to match #{@pattern}; characters = #{@buffer}" unless match_results
+      unless match_results
+        pattern_string = @pattern.is_a?(String) ? %{"#{@pattern}"} : @pattern.to_s
+        raise ParseFailureException, %{Failed to match #{pattern_string}; characters = "#{@buffer}"}
+      end
 
       finish(state_machine, match_results)
     end
