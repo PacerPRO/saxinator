@@ -2,7 +2,7 @@ require_relative 'character_block'
 require_relative 'combinator'
 
 module Saxinator
-  class Characters < ::Saxinator::Combinator
+  class Text < ::Saxinator::Combinator
     def initialize(regex, return_result: false, &block)
       super
       @regex  = regex

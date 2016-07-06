@@ -6,6 +6,21 @@ table
         text 'hi'
   end
 
+discard_results do
+  tag 'table', id: /some-table/ do
+    text 'hi'
+    tag 'br'
+    collect_results do
+      text? 'there'
+      text /, (.*)/ ->{ |s| "Mr. #{s}" }
+      text 'I am '
+      +text 'really '
+      'happy you showed up'
+    end
+  end
+end
+
+
 table
   tr+ -> [ date, description, amount ]
     td date: /{date_regex}/

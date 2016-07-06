@@ -2,7 +2,7 @@ require 'spec_helper'
 require './lib/saxinator/parsing'
 
 module Saxinator
-  RSpec.describe Characters do
+  RSpec.describe Text do
     include Parsing
 
     let(:regex)          { /(\w+)\s+chicken/ }
