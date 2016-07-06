@@ -12,8 +12,7 @@ module Saxinator
   class Parser
     def initialize(&block)
       raise InvalidParserError, 'Invalid parser; please supply a block' unless block_given?
-      # TODO: add delegation - see http://www.dan-manges.com/blog/ruby-dsls-instance-eval-with-delegation ...
-      @root = self.instance_eval(&block)
+      build_root(&block)
     end
 
     def parse(html)
@@ -28,17 +27,34 @@ module Saxinator
 
     # combinators
     def text(pattern = //)
-      # TODO: test @root before assigning ...
-      @root = Text.new(pattern)
+      @stack.push(Text.new(pattern))
     end
 
     def tag(name)
-      # TODO: test @root before assigning ...
       # TODO: allow children ...
-      @root = Element.new(name)
+      @stack.push(Element.new(name))
     end
 
     private
+
+    # TODO: add delegation - see http://www.dan-manges.com/blog/ruby-dsls-instance-eval-with-delegation ...
+    def build_root(&block)
+      @stack = []
+      self.instance_eval(&block)
+
+      build_root_from_stack
+    end
+
+    def build_root_from_stack
+      case @stack.length
+      when 0
+        raise InvalidParserError, 'Invalid parser; the supplied block is empty'
+      when 1
+        @root = @stack.first
+      else
+        @root = Sequence.new(*@stack)
+      end
+    end
 
     def inner_parse(html)
       @root.parse(html)

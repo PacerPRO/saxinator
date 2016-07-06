@@ -9,8 +9,17 @@ module Saxinator
       end
     end
 
+    context 'an empty block is supplied on creation' do
+      it 'raises an error' do
+        expect {
+          described_class.new do
+            # empty block
+          end
+        }.to raise_error(InvalidParserError)
+      end
+    end
+
     # TODO: test with empty block ...
-    # TODO: create combinators ...
     # TODO: test string and io both ...
     context 'a single #text combinator is given' do
       context 'with no pattern' do
@@ -91,7 +100,27 @@ module Saxinator
         expect(subject.parse('<td></td>')).to be_nil
       end
 
-      # TODO: test attribute patterns ...
+      # TODO: test attribute patterns, non-empty blocks ...
+    end
+
+    context 'two combinators are given' do
+      subject(:parser) {
+        described_class.new do
+          text 'hello'
+          tag 'td'
+        end
+      }
+
+      it 'raises exception on non-matching content' do
+        expect { subject.parse('chicken') }.to raise_error(ParseFailureError)
+        expect { subject.parse('hello <tr></tr>') }.to raise_error(ParseFailureError)
+        expect { subject.parse('hi <td></td>') }.to raise_error(ParseFailureError)
+        expect { subject.parse('<td></td> hello') }.to raise_error(ParseFailureError)
+      end
+
+      it 'parses matching content' do
+        expect(subject.parse('hello <td></td>')).to be_nil
+      end
     end
   end
 end
