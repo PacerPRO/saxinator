@@ -1,3 +1,5 @@
+require_relative 'state_machine'
+
 module Saxinator
   class Combinator
     def initialize(*args, return_result: false, &block)

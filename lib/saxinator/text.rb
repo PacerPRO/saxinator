@@ -3,10 +3,10 @@ require_relative 'combinator'
 
 module Saxinator
   class Text < ::Saxinator::Combinator
-    def initialize(regex, return_result: false, &block)
+    def initialize(pattern, return_result: false, &block)
       super
-      @regex  = regex
-      @buffer = ''
+      @pattern = pattern
+      @buffer  = ''
     end
 
 
@@ -20,8 +20,8 @@ module Saxinator
     end
 
     def child_failed(state_machine)
-      match_results = @buffer.match(@regex)
-      raise ParseFailureException, "Failed to match #{@regex}; characters = #{@buffer}" unless match_results
+      match_results = @buffer.match(@pattern)
+      raise ParseFailureException, "Failed to match #{@pattern}; characters = #{@buffer}" unless match_results
 
       finish(state_machine, match_results)
     end
