@@ -1,0 +1,15 @@
+# This file is managed by Chef!
+# Override node.default["git_pairs_authors"] and node.default["git_pairs_domain"] in attributes/git_pairs.rb to modify.
+#
+# NOTE (co, 7-6-2016): copied from another project, not managed by Chef
+#
+
+pairs:
+  km: Ken Mayer
+  co: Chris Osborn
+
+email:
+  prefix: pair
+  domain: pacerpro.com
+
+global: true
