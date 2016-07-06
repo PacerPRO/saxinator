@@ -67,5 +67,31 @@ module Saxinator
         end
       end
     end
+
+    context 'a single element combinator is given' do
+      subject(:parser) {
+        described_class.new do
+          tag 'td'
+        end
+      }
+
+      it 'raises exception on arbitrary text' do
+        expect { subject.parse('some arbitrary text') }.to raise_error(ParseFailureError)
+      end
+
+      it 'raises exception on tag with wrong name' do
+        expect { subject.parse('<table></table>') }.to raise_error(ParseFailureError)
+      end
+
+      it 'raises exception on end tag' do
+        expect { subject.parse('</td>') }.to raise_error(ParseFailureNokogiriError)
+      end
+
+      it 'parses element with empty body' do
+        expect(subject.parse('<td></td>')).to be_nil
+      end
+
+      # TODO: test attribute patterns ...
+    end
   end
 end

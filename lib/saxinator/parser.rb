@@ -1,5 +1,6 @@
 require 'nokogiri'
 
+require_relative 'element'
 require_relative 'invalid_parser_error'
 require_relative 'parse_failure_error'
 require_relative 'parse_failure_exception'
@@ -29,6 +30,12 @@ module Saxinator
     def text(pattern = //)
       # TODO: test @root before assigning ...
       @root = Text.new(pattern)
+    end
+
+    def tag(name)
+      # TODO: test @root before assigning ...
+      # TODO: allow children ...
+      @root = Element.new(name)
     end
 
     private
