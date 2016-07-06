@@ -8,27 +8,27 @@ module Saxinator
     end
 
 
-    def initialize_parse(parser)
-      push(parser, @child, true) # attempt to parse child
+    def initialize_parse(state_machine)
+      push(state_machine, @child, true) # attempt to parse child
     end
 
-    def start_element(parser, name, attrs = [])
-      @child.start_element(parser, name, attrs)
+    def start_element(state_machine, name, attrs = [])
+      @child.start_element(state_machine, name, attrs)
     end
 
-    def end_element(parser, name)
-      @child.end_element(parser, name)
+    def end_element(state_machine, name)
+      @child.end_element(state_machine, name)
     end
 
-    def continue(parser, result)
+    def continue(state_machine, result)
       # child parse succeeded; we succeed as well
-      finish(parser, result)
+      finish(state_machine, result)
     end
 
-    def child_failed(parser)
+    def child_failed(state_machine)
       # child parse failed
       # this is no problem
-      finish(parser, nil)
+      finish(state_machine, nil)
     end
   end
 end

@@ -1,4 +1,4 @@
-require_relative 'parser'
+require_relative 'state_machine'
 require_relative 'sequence'
 
 module Saxinator
@@ -11,24 +11,24 @@ module Saxinator
     end
 
 
-    def start_element(parser, name, attrs = [])
+    def start_element(state_machine, name, attrs = [])
       unless name == @tag_name
         raise ParseFailureException, "Expected <#{@tag_name}>, got <#{name}> instead; attributes = #{attrs}"
       end
 
-      push(parser, Sequence.new(*@children, return_result: @return_result, &:itself), false) unless @children.empty?
+      push(state_machine, Sequence.new(*@children, return_result: @return_result, &:itself), false) unless @children.empty?
     end
 
-    def end_element(parser, name)
+    def end_element(state_machine, name)
       unless name == @tag_name
         raise ParseFailureException, "Expected </#{@tag_name}>, got </#{name}> instead"
       end
 
-      finish(parser, @child_results)
+      finish(state_machine, @child_results)
     end
 
 
-    def continue(_parser, result)
+    def continue(_state_machine, result)
       @child_results = result
     end
   end

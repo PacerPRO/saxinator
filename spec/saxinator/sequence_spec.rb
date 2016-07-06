@@ -5,7 +5,7 @@ module Saxinator
   RSpec.describe Sequence do
     include Parsing
 
-    subject(:parser) {
+    subject(:state_machine) {
       RET_seq(
         RET_elt('td', RET_text('hi')),
         RET_elt('td', RET_text('there'))
@@ -15,40 +15,40 @@ module Saxinator
     context 'empty string' do
       let(:string) { '' }
 
-      it { expect { parser.parse(string) }.to raise_exception(ParseFailureException) }
+      it { expect { state_machine.parse(string) }.to raise_exception(ParseFailureException) }
     end
 
     context 'first element not matched' do
       let(:string) { '<td>hey</td><td>there</td>' }
 
-      it { expect { parser.parse(string) }.to raise_exception(ParseFailureException) }
+      it { expect { state_machine.parse(string) }.to raise_exception(ParseFailureException) }
     end
 
     context 'second element not matched' do
       let(:string) { '<td>hi</td><td>Steve</td>' }
 
-      it { expect { parser.parse(string) }.to raise_exception(ParseFailureException) }
+      it { expect { state_machine.parse(string) }.to raise_exception(ParseFailureException) }
     end
 
     context 'match' do
       let(:string) { '<td>hi</td><td>there</td>' }
 
-      it { expect(parser.parse(string)).to eq('hi there') }
+      it { expect(state_machine.parse(string)).to eq('hi there') }
     end
 
     context 'matching 0 elements' do
-      subject(:parser) { seq() }
+      subject(:state_machine) { seq() }
 
       context 'empty string' do
         let(:string) { '' }
 
-        it { expect(parser.parse(string)).to eq(nil) }
+        it { expect(state_machine.parse(string)).to eq(nil) }
       end
 
       context 'non-empty string' do
         let(:string) { '<td></td>' }
 
-        it { expect { parser.parse(string) }.to raise_exception(ParseFailureException) }
+        it { expect { state_machine.parse(string) }.to raise_exception(ParseFailureException) }
       end
     end
   end

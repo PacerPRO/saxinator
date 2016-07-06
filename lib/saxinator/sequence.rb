@@ -10,22 +10,22 @@ module Saxinator
     end
 
 
-    def initialize_parse(parser)
-      shift_next_child(parser)
+    def initialize_parse(state_machine)
+      shift_next_child(state_machine)
     end
 
-    def continue(parser, result)
+    def continue(state_machine, result)
       @child_results.push(result) unless result.nil?
-      shift_next_child(parser)
+      shift_next_child(state_machine)
     end
 
     private
 
-    def shift_next_child(parser)
+    def shift_next_child(state_machine)
       if @children.empty?
-        finish(parser, @multiple_results ? @child_results : @child_results.first)
+        finish(state_machine, @multiple_results ? @child_results : @child_results.first)
       else
-        push(parser, @children.shift, false)
+        push(state_machine, @children.shift, false)
       end
     end
   end

@@ -8,18 +8,18 @@ module Saxinator
     end
 
 
-    def initialize_parse(parser)
-      push(parser, @children.shift, true) # child is allowed to fail
+    def initialize_parse(state_machine)
+      push(state_machine, @children.shift, true) # child is allowed to fail
     end
 
-    def continue(parser, result)
+    def continue(state_machine, result)
       # child succeeded
-      finish(parser, result)
+      finish(state_machine, result)
     end
 
-    def child_failed(parser)
+    def child_failed(state_machine)
       if @children.length > 0
-        push(parser, @children.shift, true) # child is allowed to fail
+        push(state_machine, @children.shift, true) # child is allowed to fail
       else
         raise ParseFailureException, "Choice: parsing failed for all choices: #{self.inspect}"
       end

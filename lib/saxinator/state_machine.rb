@@ -2,7 +2,7 @@ require_relative 'parse_failure_exception'
 
 # TODO: fail if recording gets too large ...
 module Saxinator
-  class Parser < ::Nokogiri::XML::SAX::Document
+  class StateMachine < ::Nokogiri::XML::SAX::Document
     READ_BUFFER_SIZE     = 256
     ERROR_CONTEXT_LENGTH = 200
 
@@ -171,11 +171,11 @@ module Saxinator
     end
 
     def inner_parse
-      Nokogiri::HTML::SAX::PushParser.new(self).tap do |parser|
+      Nokogiri::HTML::SAX::PushParser.new(self).tap do |push_parser|
         while (buffer = @io.read(read_buffer_size))
-          parser << buffer
+          push_parser << buffer
         end
-        parser.finish
+        push_parser.finish
         flush_recording
       end
 

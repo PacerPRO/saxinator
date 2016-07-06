@@ -41,7 +41,7 @@ module Saxinator
         end
       end
 
-      context 'it has a child parser' do
+      context 'it has a child state machine' do
         let(:tag_name) { 'td'                              }
         let(:string)   { '<td>I have a brown chicken</td>' }
 
@@ -64,7 +64,7 @@ module Saxinator
         end
       end
 
-      context 'it has multiple child parsers' do
+      context 'it has multiple child state machines' do
         let(:string) { '<td><b>Hello</b>. I have a brown chicken</td>' }
 
         it 'passes results of child parses to the provided block, ignoring nils' do

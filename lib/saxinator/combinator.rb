@@ -13,47 +13,47 @@ module Saxinator
     end
 
 
-    def start_element(_parser, name, attrs = [])
+    def start_element(_state_machine, name, attrs = [])
       raise ParseFailureException, "Unexpected: <#{name.inspect}>; attributes = #{attrs.inspect}"
     end
 
-    def characters(_parser, string)
+    def characters(_state_machine, string)
       #raise ParseFailureException, "Unexpected character data: #{string.inspect}"
     end
 
-    def end_element(_parser, name)
+    def end_element(_state_machine, name)
       raise ParseFailureException, "Unexpected: </#{name.inspect}>"
     end
 
-    def end_document(_parser)
+    def end_document(_state_machine)
       raise ParseFailureException, 'Unexpected end of document'
     end
 
 
-    def initialize_parse(_parser)
+    def initialize_parse(_state_machine)
       # by default, do nothing
     end
 
-    def push(parser, child_combinator, can_fail)
+    def push(state_machine, child_combinator, can_fail)
       unless self.respond_to?(:continue)
         raise ParseFailureException, "Combinator called 'push', but does not implement 'continue': #{self.inspect}"
       end
 
-      parser.push(child_combinator, can_fail)
+      state_machine.push(child_combinator, can_fail)
     end
 
-    def finish(parser, result)
+    def finish(state_machine, result)
       # return nil if there is no block; prevents work from being done unless explicit
-      parser.pop(@return_result && @block ? @block.call(result) : nil)
+      state_machine.pop(@return_result && @block ? @block.call(result) : nil)
     end
 
-    def child_failed(_parser)
+    def child_failed(_state_machine)
       raise ParseFailureException, "Child failed to parse, but this combinator cannot recover: #{self.inspect}"
     end
 
 
     def parse(html)
-      Parser.new(self).parse(html)
+      StateMachine.new(self).parse(html)
     end
   end
 end

@@ -7,8 +7,8 @@ module Saxinator
     end
 
 
-    def characters(parser, string)
-      finish(parser, string) unless string.empty?
+    def characters(state_machine, string)
+      finish(state_machine, string) unless string.empty?
     end
   end
 end

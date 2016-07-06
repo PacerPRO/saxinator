@@ -8,22 +8,22 @@ module Saxinator
       @child_results = []
     end
 
-    def initialize_parse(parser)
-      push(parser, @child, true) # child is allowed to fail
+    def initialize_parse(state_machine)
+      push(state_machine, @child, true) # child is allowed to fail
     end
 
-    def continue(parser, result)
+    def continue(state_machine, result)
       # child parse succeeded; record result and keep going
       @child_results.push(result) unless result.nil?
 
       @child.reset
-      push(parser, @child, true) # child is allowed to fail
+      push(state_machine, @child, true) # child is allowed to fail
     end
 
-    def child_failed(parser)
+    def child_failed(state_machine)
       # child parse failed
       # return results collected
-      finish(parser, @child_results)
+      finish(state_machine, @child_results)
     end
   end
 end
