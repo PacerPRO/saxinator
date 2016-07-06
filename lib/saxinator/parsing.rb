@@ -1,6 +1,6 @@
 require 'nokogiri'
 
-require_relative 'characters'
+require_relative 'text'
 require_relative 'choice'
 require_relative 'element'
 require_relative 'optional'
@@ -11,7 +11,7 @@ module Saxinator
   module Parsing
     # non-returning elements
     def text(regex, &block)
-      Characters.new(regex, &block)
+      Text.new(regex, &block)
     end
 
     def elt(tag_name, *children, &block)
@@ -37,7 +37,7 @@ module Saxinator
     # elements returning values (use sparingly)
     def RET_text(regex, &block)
       block = proc { |match_data| match_data && (match_data[1] || match_data[0]) } unless block_given?
-      Characters.new(regex, return_result: true, &block)
+      Text.new(regex, return_result: true, &block)
     end
 
     def RET_elt(tag_name, *children, &block)

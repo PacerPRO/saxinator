@@ -5,8 +5,8 @@ module Saxinator
   RSpec.describe Text do
     include Parsing
 
-    let(:regex)          { /(\w+)\s+chicken/ }
-    subject(:characters) { RET_text(regex)   }
+    let(:regex)    { /(\w+)\s+chicken/ }
+    subject(:text) { RET_text(regex)   }
 
     context 'parsing fails' do
       it 'raises exception on start tag' do
@@ -17,7 +17,7 @@ module Saxinator
         expect { subject.parse('</table>') }.to raise_exception(Nokogiri::XML::SyntaxError)
       end
 
-      it 'raises exception if characters do not match regex' do
+      it 'raises exception if text does not match regex' do
         expect { subject.parse('I have a turkey') }.to raise_exception(ParseFailureException)
       end
     end
@@ -33,8 +33,8 @@ module Saxinator
         it 'passes match data to the provided block' do
           r = nil
 
-          characters = RET_text(regex) { |match_data| r = match_data[1] }
-          characters.parse(string)
+          text = RET_text(regex) { |match_data| r = match_data[1] }
+          text.parse(string)
 
           expect(r).to eq('brown')
         end
