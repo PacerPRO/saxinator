@@ -12,7 +12,7 @@ discard_results do
     tag 'br'
     collect_results do
       text? 'there'
-      text /, (.*)/ ->{ |s| "Mr. #{s}" }
+      text /, (.*)/, ->{ |s| "Mr. #{s}" }
       text 'I am '
       +text 'really '
       'happy you showed up'
