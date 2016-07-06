@@ -19,7 +19,6 @@ module Saxinator
       end
     end
 
-    # TODO: test with empty block ...
     # TODO: test string and io both ...
     context 'a single #text combinator is given' do
       context 'with no pattern' do
