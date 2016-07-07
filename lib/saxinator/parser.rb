@@ -2,6 +2,7 @@ require 'nokogiri'
 
 require_relative 'element'
 require_relative 'invalid_parser_error'
+require_relative 'optional'
 require_relative 'parse_failure_error'
 require_relative 'parse_failure_exception'
 require_relative 'parse_failure_nokogiri_error'
@@ -39,6 +40,13 @@ module Saxinator
       else
         @stack.push(Element.new(name))
       end
+    end
+
+    def optional(&block)
+      raise InvalidParserError, 'Invalid "optional" element; please supply a block' unless block_given?
+
+      subroot = Parser.new(&block).root
+      @stack.push(Optional.new(subroot))
     end
 
 
