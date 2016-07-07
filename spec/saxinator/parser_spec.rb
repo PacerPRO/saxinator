@@ -92,7 +92,7 @@ module Saxinator
       end
 
       it 'raises exception on end tag' do
-        expect { subject.parse('</td>') }.to raise_error(ParseFailureNokogiriError)
+        expect { subject.parse('</td>') }.to raise_error(ParseFailureError)
       end
 
       it 'parses element with empty body' do
@@ -119,6 +119,54 @@ module Saxinator
 
       it 'parses matching content' do
         expect(subject.parse('hello <td></td>')).to be_nil
+      end
+    end
+
+    context 'combinators are nested' do
+      subject(:parser) {
+        described_class.new do
+          tag 'b' do
+            text 'hello'
+          end
+        end
+      }
+
+      it 'raises exception on non-matching content' do
+        expect { subject.parse('hello') }.to raise_error(ParseFailureError)
+        expect { subject.parse('<b>goodbye</b>') }.to raise_error(ParseFailureError)
+        expect { subject.parse('<td>hello</td>') }.to raise_error(ParseFailureError)
+        expect { subject.parse('<b>hello</td>') }.to raise_error(ParseFailureError)
+        expect { subject.parse('<b><b>hello</b></b>') }.to raise_error(ParseFailureError)
+      end
+
+      it 'parses matching content' do
+        expect(subject.parse('<b>hello</b>')).to be_nil
+      end
+    end
+
+    context 'combinators are nested (complex example)' do
+      subject(:parser) {
+        described_class.new do
+          tag 'tr' do
+            tag 'td' do
+              text 'hello'
+            end
+            tag 'td' do
+              text 'goodbye'
+            end
+          end
+        end
+      }
+
+      it 'raises exception on non-matching content' do
+        expect { subject.parse('<tr><td>hello</td><td>there</td></tr>') }.to raise_error(ParseFailureError)
+        expect { subject.parse('<tr><td>hello</td></tr>') }.to raise_error(ParseFailureError)
+        expect { subject.parse('<tr><b>hello</b><b>goodbye</b></tr>') }.to raise_error(ParseFailureError)
+        expect { subject.parse('<table><td>hello</td><td>goodbye</td></table>') }.to raise_error(ParseFailureError)
+      end
+
+      it 'parses matching content' do
+        expect(subject.parse('<tr><td>hello</td><td>goodbye</td></tr>')).to be_nil
       end
     end
   end

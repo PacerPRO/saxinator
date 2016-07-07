@@ -30,10 +30,24 @@ module Saxinator
       @stack.push(Text.new(pattern))
     end
 
-    def tag(name)
-      # TODO: allow children ...
-      @stack.push(Element.new(name))
+    # TODO?: make non-recursive to guard against stack overflow ...
+    def tag(name, &block)
+      if block_given?
+        # TODO: get the children of the Sequence object at the root ...
+        subroot = Parser.new(&block).root
+        @stack.push(Element.new(name, subroot))
+      else
+        @stack.push(Element.new(name))
+      end
     end
+
+
+    protected
+
+    def root
+      @root
+    end
+
 
     private
 
