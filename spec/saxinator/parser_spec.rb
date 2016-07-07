@@ -170,6 +170,11 @@ module Saxinator
       end
     end
 
+    # TODO: recognize text, optional, text
+    # TODO:   (really, just need to recognize text, text) ...
+
+    # TODO: allow for a range, e.g. range(1, 5)
+    # TODO: test multiple arguments ...
     context 'an #optional combinator is given' do
       # TODO: test multiple children for #optional ...
       subject {
@@ -201,11 +206,28 @@ module Saxinator
         expect(subject.parse('<b>hello</b><b>there</b><b>friend</b>')).to be_nil
         expect(subject.parse('<b>hello</b><b>friend</b>')).to be_nil
       end
+
+      context 'there are multiple combinators underneath the #optional combinator' do
+        subject {
+          described_class.new do
+            tag('b') { text 'hello' }
+            optional do
+              tag('b') { text 'there' }
+              tag('b') { text 'my' }
+            end
+            tag('b') { text 'friend' }
+          end
+        }
+
+        it 'raises an error on non-matching content' do
+          expect { subject.parse('<b>hello</b><b>there</b><b>friend</b>') }.to raise_error(ParseFailureError)
+        end
+
+        it 'parses matching content' do
+          expect(subject.parse('<b>hello</b><b>there</b><b>my</b><b>friend</b>')).to be_nil
+          expect(subject.parse('<b>hello</b><b>friend</b>')).to be_nil
+        end
+      end
     end
-
-    # TODO: recognize text, optional, text
-    # TODO:   (really, just need to recognize text, text) ...
-
-    # TODO: allow for a range, e.g. range(1, 5)
   end
 end
