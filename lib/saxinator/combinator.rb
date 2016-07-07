@@ -55,6 +55,7 @@ module Saxinator
 
 
     def parse(html)
+      reset
       StateMachine.new(self).parse(html)
     end
   end
