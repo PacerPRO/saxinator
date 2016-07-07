@@ -227,5 +227,60 @@ module Saxinator
         end
       end
     end
+
+    context 'a #star combinator is given' do
+      subject {
+        described_class.new do
+          tag('b') { text 'hello' }
+          star do
+            tag('b') { text 'there' }
+          end
+          tag('b') { text 'friend' }
+        end
+      }
+
+      context 'no block is given' do
+        it 'raises an error' do
+          expect {
+            described_class.new do
+              star
+            end
+          }.to raise_error(InvalidParserError)
+        end
+      end
+
+      it 'raises an error on non-matching content' do
+        expect { subject.parse('<b>hello</b><td>there</td><b>friend</b>') }.to raise_error(ParseFailureError)
+      end
+
+      it 'parses matching content' do
+        expect(subject.parse('<b>hello</b><b>there</b><b>there</b><b>friend</b>')).to be_nil
+        expect(subject.parse('<b>hello</b><b>there</b><b>friend</b>')).to be_nil
+        expect(subject.parse('<b>hello</b><b>friend</b>')).to be_nil
+      end
+
+      context 'there are multiple combinators underneath the #star combinator' do
+        subject {
+          described_class.new do
+            tag('b') { text 'hello' }
+            star do
+              tag('b') { text 'there' }
+              tag('b') { text 'my' }
+            end
+            tag('b') { text 'friend' }
+          end
+        }
+
+        it 'raises an error on non-matching content' do
+          expect { subject.parse('<b>hello</b><b>there</b><b>friend</b>') }.to raise_error(ParseFailureError)
+        end
+
+        it 'parses matching content' do
+          expect(subject.parse('<b>hello</b><b>there</b><b>my</b><b>there</b><b>my</b><b>friend</b>')).to be_nil
+          expect(subject.parse('<b>hello</b><b>there</b><b>my</b><b>friend</b>')).to be_nil
+          expect(subject.parse('<b>hello</b><b>friend</b>')).to be_nil
+        end
+      end
+    end
   end
 end

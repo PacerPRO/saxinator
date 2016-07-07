@@ -7,6 +7,7 @@ require_relative 'parse_failure_error'
 require_relative 'parse_failure_exception'
 require_relative 'parse_failure_nokogiri_error'
 require_relative 'sequence'
+require_relative 'star'
 require_relative 'text'
 
 module Saxinator
@@ -47,6 +48,13 @@ module Saxinator
 
       subroot = Parser.new(&block).root
       @stack.push(Optional.new(subroot))
+    end
+
+    def star(&block)
+      raise InvalidParserError, 'Invalid "star" element; please supply a block' unless block_given?
+
+      subroot = Parser.new(&block).root
+      @stack.push(Star.new(subroot))
     end
 
 
