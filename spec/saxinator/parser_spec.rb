@@ -174,9 +174,7 @@ module Saxinator
     # TODO:   (really, just need to recognize text, text) ...
 
     # TODO: allow for a range, e.g. range(1, 5)
-    # TODO: test multiple arguments ...
     context 'an #optional combinator is given' do
-      # TODO: test multiple children for #optional ...
       subject {
         described_class.new do
           tag('b') { text 'hello' }
