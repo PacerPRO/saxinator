@@ -12,14 +12,6 @@ module Saxinator
       push(state_machine, @child, true) # attempt to parse child
     end
 
-    def start_element(state_machine, name, attrs = [])
-      @child.start_element(state_machine, name, attrs)
-    end
-
-    def end_element(state_machine, name)
-      @child.end_element(state_machine, name)
-    end
-
     def continue(state_machine, result)
       # child parse succeeded; we succeed as well
       finish(state_machine, result)
