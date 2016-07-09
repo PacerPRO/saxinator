@@ -314,7 +314,7 @@ module Saxinator
 
       it 'parses matching content' do
         expect(subject.parse('<b>hello</b><b>there</b><b>friend</b>')).to be_nil
-        #expect(subject.parse('<b>hello</b><b>my</b><b>friend</b>')).to be_nil
+        expect(subject.parse('<b>hello</b><b>my</b><b>friend</b>')).to be_nil
       end
 
       # TODO ...
