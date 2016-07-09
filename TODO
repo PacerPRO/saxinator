@@ -20,6 +20,12 @@ discard_results do
   end
 end
 
+collect_results do
+  any do
+    try { text 'hi'    }
+    try { text 'there' }
+  end
+end
 
 table
   tr+ -> [ date, description, amount ]

@@ -282,5 +282,42 @@ module Saxinator
         end
       end
     end
+
+    context 'an #any combinator is given' do
+      subject {
+        described_class.new do
+          tag('b') { text 'hello' }
+          tag('b') do
+            any do
+              try { text 'there' }
+              try { text 'my'    }
+            end
+          end
+          tag('b') { text 'friend' }
+        end
+      }
+
+      context 'no block is given' do
+        it 'raises an error' do
+          expect {
+            described_class.new do
+              any
+            end
+          }.to raise_error(InvalidParserError)
+        end
+      end
+
+      it 'raises an error on non-matching content' do
+        expect { subject.parse('<b>hello</b><b>best</b><b>friend</b>') }.to raise_error(ParseFailureError)
+        expect { subject.parse('<b>hello</b><b>friend</b>') }.to raise_error(ParseFailureError)
+      end
+
+      it 'parses matching content' do
+        expect(subject.parse('<b>hello</b><b>there</b><b>friend</b>')).to be_nil
+        #expect(subject.parse('<b>hello</b><b>my</b><b>friend</b>')).to be_nil
+      end
+
+      # TODO ...
+    end
   end
 end
