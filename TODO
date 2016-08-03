@@ -1,10 +1,61 @@
+Base values
+-----------
 
-table
+A "base value" is one of:
+
+1. nil
+2. a value
+3. a hash
+4. an array
+
+
+
+Result hashes
+-------------
+
+The result of any successful parse is a "result hash", which looks like this:
+
+  { assignments..., values: [...] }
+
+Here, "assignments" are assignments of keys to values, where the values are themselves "result hashes".
+"values" is a single key assigned to an array of "base values."
+
+
+
+Base result hashes
+------------------
+
+"Base values" are converted into "result hashes" (called "base result hashes") as follows:
+
+1. nil     -> { values: []  }
+2. x:value -> { values: [x] }
+3. x:array -> { values: x   }
+4. x:hash  -> { values: []  }.merge(x)
+
+
+
+Combining result hashes
+-----------------------
+
+Result hashes can be combined when they occur sequentially (the results of parses of a 'td' block, for example), as
+follows:
+
+{ xassigns..., values: x } + { yassigns..., values: y } -> { xassigns.merge(yassigns), values: x + y }
+
+
+
+Syntax examples
+---------------
+
+table do
   collect_results do
-    tr
-      td
+    tr do
+      td do
         text 'hi'
+      end
+    end
   end
+end
 
 discard_results do
   tag 'table', id: /some-table/ do
@@ -15,7 +66,7 @@ discard_results do
       text /, (.*)/, ->{ |s| "Mr. #{s}" }
       text 'I am '
       +text 'really '
-      'happy you showed up'
+      text 'happy you showed up'
     end
   end
 end
@@ -27,11 +78,27 @@ collect_results do
   end
 end
 
-table
+
+
+Ideas
+-----
+
+1. "get"
+
+get :person do
+  ...
+end
+
+
+
+
+---- Ken's syntax ----
+
+table do
   tr+ -> [ date, description, amount ]
     td date: /{date_regex}/
     td description: /.+/
-    td amount: /\$(\d+\.\d{2})/, caputre: 1
+    td amount: /\$(\d+\.\d{2})/, capture: 1
 
 [
  [ date, description, amount],

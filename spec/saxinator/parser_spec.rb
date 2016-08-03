@@ -99,7 +99,7 @@ module Saxinator
         expect(subject.parse('<td></td>')).to be_nil
       end
 
-      # TODO: test attribute patterns, non-empty blocks ...
+      # TODO: test attribute patterns ...
     end
 
     context 'two combinators are given' do
