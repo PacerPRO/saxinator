@@ -1,3 +1,29 @@
+Collecting results
+------------------
+
+By default, Saxinator parsers do *not* return values for successfully parsed blocks of code, although they do execute
+side-effects. This is to prevent large data structures from being built up and consuming lots of memory. Results are
+only built up and returned if they are inside a "collect_results" block, e.g.:
+
+collect_results do
+  ...
+end
+
+Within a "collect_results" block, the user may disable the collecting of results for a particular sub-parse, e.g.:
+
+discard_results do
+  ...
+end
+
+It is a good idea to do this even if you don't explicitly specify any return results within "...", as certain
+combinators may return default values, which causing partial return results to be built up anyway (even though they are
+ultimately dropped). Wrapping "discard_results" around a block prevents the results from being built up in the first
+place.
+
+You may nest "collect_results" and "discard_results" arbitrarily, as deeply as you please.
+
+
+
 Base values
 -----------
 
@@ -37,10 +63,62 @@ Base result hashes
 Combining result hashes
 -----------------------
 
-Result hashes can be combined when they occur sequentially (the results of parses of a 'td' block, for example), as
+Result hashes are combined when they occur sequentially (the results of parses of a 'td' block, for example), as
 follows:
 
 { xassigns..., values: x } + { yassigns..., values: y } -> { xassigns.merge(yassigns), values: x + y }
+
+
+
+Result hash examples
+--------------------
+
+1.
+
+text 'hello (there)'
+-->
+{ values: [] }
+
+2.
+
+text 'hello (there)', -> { |matches| matches[1] }
+-->
+{ values: ['there'] }
+
+3.
+
+tag 'td' do
+  text 'hello', -> { |matches| matches[0] }
+  text 'there', -> { |matches| matches[0] }
+end
+-->
+{ values: ['hello', 'there'] }
+
+4.
+
+tag 'td' do, -> { |x| x }
+  text 'hello', -> { |matches| matches[0] }
+  text 'there', -> { |matches| matches[0] }
+end
+-->
+{ values: ['hello', 'there'] }
+
+5.
+
+tag 'td' do, -> { |x| { words: x } }
+  text 'hello', -> { |matches| matches[0] }
+  text 'there', -> { |matches| matches[0] }
+end
+-->
+{ words: { values: ['hello', 'there'] }, values: [] }
+
+6.
+
+star do
+  text 'hello', -> { |matches| matches[0] }
+end
+-->
+{ values: ['hello', 'hello', 'hello'] }
 
 
 
@@ -83,12 +161,22 @@ end
 Ideas
 -----
 
-1. "get"
+1. "get" (maybe not needed in light of 2, but seems like easy-to-understand syntax ...)
 
 get :person do
   ...
 end
 
+2. curried helper functions for return results:
+
+tag 'td' do, as(:person)
+  text 'hello', -> { |matches| matches[0] }
+  text 'there', -> { |matches| matches[0] }
+end
+-->
+{ person: { values: ['hello', 'there'] }, values: [] }
+
+(NOTE: as(:person) translates into -> { |x| { person: x, values: [] } }
 
 
 
