@@ -9,14 +9,15 @@ collect_results do
   ...
 end
 
-Within a "collect_results" block, the user may disable the collecting of results for a particular sub-parse, e.g.:
+Within a "collect_results" block, the user may disable the collecting of results for a particular sub-parse using the
+"discard_results" construct, e.g.:
 
 discard_results do
   ...
 end
 
 It is a good idea to do this even if you don't explicitly specify any return results within "...", as certain
-combinators may return default values, which causing partial return results to be built up anyway (even though they are
+combinators may return default values, causing partial return results to be built up anyway (even though they are
 ultimately dropped). Wrapping "discard_results" around a block prevents the results from being built up in the first
 place.
 
@@ -31,8 +32,8 @@ A "base value" is one of:
 
 1. nil
 2. a value
-3. a hash
-4. an array
+3. an array
+4. an hash
 
 
 
@@ -63,8 +64,7 @@ Base result hashes
 Combining result hashes
 -----------------------
 
-Result hashes are combined when they occur sequentially (the results of parses of a 'td' block, for example), as
-follows:
+Result hashes are combined when they occur sequentially, via the "+" operator, as follows:
 
 { xassigns..., values: x } + { yassigns..., values: y } -> { xassigns.merge(yassigns), values: x + y }
 
