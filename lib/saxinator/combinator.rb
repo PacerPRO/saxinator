@@ -1,17 +1,19 @@
+require_relative 'result_hash'
 require_relative 'state_machine'
 
 module Saxinator
   class Combinator
-    def initialize(*args, return_result: false, &block)
+    def initialize(*args, return_result: false, f: nil, &block)
       @args          = args
       @return_result = return_result
+      @f             = f
       @block         = block
     end
 
 
     def reset
       @args.each { |arg| arg.reset if arg.is_a?(Combinator) }
-      initialize(*@args, return_result: @return_result, &@block)
+      initialize(*@args, return_result: @return_result, f: @f, &@block)
     end
 
 
@@ -45,8 +47,8 @@ module Saxinator
     end
 
     def finish(state_machine, result)
-      # return nil if there is no block; prevents work from being done unless explicit
-      state_machine.pop(@return_result && @block ? @block.call(result) : nil)
+      # return nil if there is no function; prevents work from being done unless explicit
+      state_machine.pop(@return_result && @f ? ResultHash.new(@f.call(result)) : nil)
     end
 
     def child_failed(_state_machine)

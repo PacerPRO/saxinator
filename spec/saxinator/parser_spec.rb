@@ -74,6 +74,30 @@ module Saxinator
           expect(subject.parse('the table is brown')).to be_nil
         end
       end
+
+      context 'with a lambda' do
+        subject {
+          described_class.new do
+            text /my favorite color is (\w+)/, -> (matches) { matches[1] }
+          end
+        }
+
+        it 'returns the expected result' do
+          expect(subject.parse('my favorite color is green')).to eq({ values: ['green'] })
+        end
+      end
+
+      context 'with a lambda returning an array of results' do
+        subject {
+          described_class.new do
+            text /my favorite colors are (\w+) and (\w+)/, -> (matches) { matches.to_a.drop(1) }
+          end
+        }
+
+        it 'returns the expected result' do
+          expect(subject.parse('my favorite colors are red and blue')).to eq({ values: ['red', 'blue'] })
+        end
+      end
     end
 
     context 'a single element combinator is given' do

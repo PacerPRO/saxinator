@@ -2,7 +2,7 @@ require_relative 'combinator'
 
 module Saxinator
   class Optional < ::Saxinator::Combinator
-    def initialize(child, return_result: false, &block)
+    def initialize(child, return_result: false, f: nil, &block)
       super
       @child = child
     end

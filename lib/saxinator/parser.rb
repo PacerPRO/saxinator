@@ -15,8 +15,9 @@ require_relative 'text'
 module Saxinator
   class Parser < ::Saxinator::ParserBase
     # combinators
-    def text(pattern = //)
-      @stack.push(Text.new(pattern))
+    def text(pattern = //, f = nil)
+      # TODO: do not always return result ...
+      @stack.push(Text.new(pattern, return_result: true, f: f))
     end
 
     # TODO?: make non-recursive to guard against stack overflow ...

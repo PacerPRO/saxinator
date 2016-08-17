@@ -50,7 +50,8 @@ module Saxinator
     end
 
     def inner_parse(html)
-      @root.parse(html)
+      r = @root.parse(html)
+      r ? r.inner_value : nil
     end
   end
 end

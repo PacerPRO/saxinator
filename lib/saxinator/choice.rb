@@ -2,7 +2,7 @@ require_relative 'combinator'
 
 module Saxinator
   class Choice < ::Saxinator::Combinator
-    def initialize(child, *more_children, return_result: false, &block)
+    def initialize(child, *more_children, return_result: false, f: nil, &block)
       super
       @children = [child, *more_children]
     end
