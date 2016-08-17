@@ -3,17 +3,16 @@ require_relative 'state_machine'
 
 module Saxinator
   class Combinator
-    def initialize(*args, return_result: false, f: nil, &block)
+    def initialize(*args, return_result: false, f: nil)
       @args          = args
       @return_result = return_result
       @f             = f
-      @block         = block
     end
 
 
     def reset
       @args.each { |arg| arg.reset if arg.is_a?(Combinator) }
-      initialize(*@args, return_result: @return_result, f: @f, &@block)
+      initialize(*@args, return_result: @return_result, f: @f)
     end
 
 

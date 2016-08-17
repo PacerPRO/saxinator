@@ -3,7 +3,7 @@ require_relative 'sequence'
 
 module Saxinator
   class Element < ::Saxinator::Combinator
-    def initialize(tag_name, *children, return_result: false, f: nil, &block)
+    def initialize(tag_name, *children, return_result: false, f: nil)
       super
       @children      = [*children]
       @tag_name      = tag_name

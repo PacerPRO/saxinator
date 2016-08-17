@@ -2,7 +2,7 @@ require_relative 'combinator'
 
 module Saxinator
   class Sequence < ::Saxinator::Combinator
-    def initialize(*children, return_result: false, f: nil, &block)
+    def initialize(*children, return_result: false, f: nil)
       super
       @children         = [*children]
       @multiple_results = @children.length > 1
