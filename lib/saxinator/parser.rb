@@ -32,11 +32,12 @@ module Saxinator
       end
     end
 
-    def optional(&block)
+    # TODO: do not always return result ...
+    def optional(f = nil, &block)
       raise InvalidParserError, 'Invalid "optional" element; please supply a block' unless block_given?
 
       subroot = Parser.new(&block).root
-      @stack.push(Optional.new(subroot))
+      @stack.push(Optional.new(subroot, return_result: true, f: f))
     end
 
     def star(&block)

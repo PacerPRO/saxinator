@@ -318,6 +318,30 @@ module Saxinator
           expect { subject.parse('<b>hello</b><b>friend</b>') }.not_to raise_exception
         end
       end
+
+      RSpec.shared_examples 'results are returned' do |f|
+        subject {
+          described_class.new do
+            tag('b') { text 'hello', -> (_) { 'not me' } }
+            optional f do
+              tag('b') { text 'there', -> (_) { 'here I am!' } }
+            end
+            tag('b') { text 'friend', -> (_) { 'not me either' } }
+          end
+        }
+
+        it 'returns the expected result' do
+          expect(subject.parse('<b>hello</b><b>there</b><b>friend</b>')).to eq(
+            { values: ['not me', 'here I am!', 'not me either'] }
+          )
+
+          expect(subject.parse('<b>hello</b><b>friend</b>')).to eq({ values: ['not me', 'not me either'] })
+        end
+      end
+
+      # test with lambda argument, and without
+      include_examples 'results are returned', -> (result) { result }
+      include_examples 'results are returned', nil
     end
 
     context 'a #star combinator is given' do
