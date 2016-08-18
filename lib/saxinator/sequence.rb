@@ -4,9 +4,8 @@ module Saxinator
   class Sequence < ::Saxinator::Combinator
     def initialize(*children, return_result: false, f: nil)
       super
-      @children         = [*children]
-      @multiple_results = @children.length > 1
-      @child_results    = []
+      @children      = [*children]
+      @child_results = []
     end
 
 
@@ -24,7 +23,8 @@ module Saxinator
 
     def shift_next_child(state_machine)
       if @children.empty?
-        finish(state_machine, @multiple_results ? @child_results.reduce(:+) : @child_results.first)
+        # TODO: what if @child_results.empty? ...
+        finish(state_machine, @child_results.reduce(:+))
       else
         push(state_machine, @children.shift, false)
       end
