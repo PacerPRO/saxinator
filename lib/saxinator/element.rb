@@ -7,6 +7,7 @@ module Saxinator
       super
       @children      = [*children]
       @tag_name      = tag_name
+      @attrs         = {}
       @child_results = nil
     end
 
@@ -15,6 +16,7 @@ module Saxinator
       unless name == @tag_name
         raise ParseFailureException, "Expected <#{@tag_name}>, got <#{name}> instead; attributes = #{attrs}"
       end
+      @attrs = attrs.to_h
 
       push(state_machine, Sequence.new(*@children, return_result: @return_result, &:itself), false) unless @children.empty?
     end
@@ -30,6 +32,14 @@ module Saxinator
 
     def continue(_state_machine, result)
       @child_results = result
+    end
+
+
+    private
+
+    # override to include attributes
+    def call_f(result)
+      @f.call(result, @attrs)
     end
   end
 end

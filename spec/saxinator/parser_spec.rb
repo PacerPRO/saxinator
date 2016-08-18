@@ -123,7 +123,24 @@ module Saxinator
         expect(subject.parse('<td></td>')).to be_nil
       end
 
+      # TODO: allow tag_name patterns as well, and pass in tag_name to provided lambda ...
       # TODO: test attribute patterns ...
+
+      context 'with a lambda' do
+        subject {
+          described_class.new do
+            tag 'td', -> (_value, attrs) { attrs }
+          end
+        }
+
+        it 'returns the expected result' do
+          expect(subject.parse('<td width=500 height=200></td>')).to eq(
+            { 'width' => '500', 'height' => '200', values: [] }
+          )
+        end
+      end
+
+      # TODO: with a lambda and also child results ...
     end
 
     context 'two combinators are given' do

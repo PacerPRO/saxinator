@@ -21,13 +21,14 @@ module Saxinator
     end
 
     # TODO?: make non-recursive to guard against stack overflow ...
-    def tag(name, &block)
+    def tag(name, f = nil, &block)
+      # TODO: don't always return result ...
       if block_given?
         # TODO: get the children of the Sequence object at the root ...
         subroot = Parser.new(&block).root
-        @stack.push(Element.new(name, subroot))
+        @stack.push(Element.new(name, subroot, return_result: true, f: f))
       else
-        @stack.push(Element.new(name))
+        @stack.push(Element.new(name, return_result: true, f: f))
       end
     end
 

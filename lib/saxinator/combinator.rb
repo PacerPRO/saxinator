@@ -47,7 +47,7 @@ module Saxinator
 
     def finish(state_machine, result)
       # return nil if there is no function; prevents work from being done unless explicit
-      state_machine.pop(@return_result && @f ? ResultHash.new(@f.call(result)) : nil)
+      state_machine.pop(@return_result && @f ? ResultHash.new(call_f(result)) : nil)
     end
 
     def child_failed(_state_machine)
@@ -58,6 +58,13 @@ module Saxinator
     def parse(html)
       reset
       StateMachine.new(self).parse(html)
+    end
+
+
+    private
+
+    def call_f(result)
+      @f.call(result)
     end
   end
 end

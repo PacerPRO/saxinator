@@ -96,7 +96,7 @@ end
 
 4.
 
-tag 'td' do, -> { |x| x }
+tag 'td', -> { |x| x } do
   text 'hello', -> { |matches| matches[0] }
   text 'there', -> { |matches| matches[0] }
 end
@@ -105,7 +105,7 @@ end
 
 5.
 
-tag 'td' do, -> { |x| { words: x } }
+tag 'td' do -> { |x| { words: x } },
   text 'hello', -> { |matches| matches[0] }
   text 'there', -> { |matches| matches[0] }
 end
