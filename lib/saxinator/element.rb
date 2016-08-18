@@ -40,7 +40,7 @@ module Saxinator
     # override of base method to include attributes
     # TODO: somehow make it so @f doesn't have to take @attrs as an argument ...
     def call_f(r)
-      @f.call(r, @attrs)
+      @f.arity > 1 ? @f.call(r, @attrs) : @f.call(r)
     end
   end
 end

@@ -199,10 +199,10 @@ module Saxinator
         expect { subject.parse('<b>hello</b>') }.not_to raise_exception
       end
 
-      context 'lambdas are given' do
+      context 'a lambda is given' do
         subject {
           described_class.new do
-            tag 'b', -> (value, _attrs) { value } do
+            tag 'b', -> (value) { value } do
               text 'hello', -> (matches) { matches[0] }
             end
           end
