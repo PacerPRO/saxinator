@@ -46,9 +46,7 @@ module Saxinator
     end
 
     def finish(state_machine, result)
-      # return nil if there is no function; prevents work from being done unless explicit
-      r = result.is_a?(ResultHash) ? result.inner_value : result
-      state_machine.pop(@return_result && @f ? ResultHash.new(call_f(r)) : nil)
+      state_machine.pop(finalize(result))
     end
 
     def child_failed(_state_machine)
@@ -64,6 +62,19 @@ module Saxinator
 
     private
 
+    def finalize(result)
+      @return_result ? call_f_and_hashify(get_inner_value(result)) : nil
+    end
+
+    def call_f_and_hashify(value)
+      ResultHash.new(@f ? call_f(value) : value)
+    end
+
+    def get_inner_value(result)
+      result.is_a?(ResultHash) ? result.inner_value : result
+    end
+
+    # overridable
     def call_f(r)
       @f.call(r)
     end

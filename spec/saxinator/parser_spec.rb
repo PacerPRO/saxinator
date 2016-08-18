@@ -170,7 +170,7 @@ module Saxinator
           end
         }
 
-        it 'parses matching content' do
+        it 'returns the expected result' do
           expect(subject.parse('hello <td width="400"></td>')).to eq({ values: %w(hello 400) })
         end
       end
@@ -195,6 +195,20 @@ module Saxinator
 
       it 'parses matching content' do
         expect { subject.parse('<b>hello</b>') }.not_to raise_exception
+      end
+
+      context 'lambdas are given' do
+        subject {
+          described_class.new do
+            tag 'b', -> (value, _attrs) { value } do
+              text 'hello', -> (matches) { matches[0] }
+            end
+          end
+        }
+
+        it 'returns the expected result' do
+          expect(subject.parse('<b>hello</b>')).to eq({ values: ['hello'] })
+        end
       end
     end
 
