@@ -321,7 +321,7 @@ module Saxinator
         end
       end
 
-      RSpec.shared_examples 'results are returned' do |f|
+      RSpec.shared_examples 'a lambda is given' do |f|
         subject {
           described_class.new do
             tag('b') { text 'hello', -> (_) { 'not me' } }
@@ -342,8 +342,8 @@ module Saxinator
       end
 
       # test with lambda argument, and without
-      include_examples 'results are returned', -> (result) { result }
-      include_examples 'results are returned', nil
+      include_examples 'a lambda is given', -> (result) { result }
+      include_examples 'a lambda is given', nil
     end
 
     context 'a #star combinator is given' do
