@@ -19,11 +19,12 @@ module Saxinator
       shift_next_child(state_machine)
     end
 
+
     private
 
     def shift_next_child(state_machine)
       if @children.empty?
-        finish(state_machine, @multiple_results ? @child_results : @child_results.first)
+        finish(state_machine, @multiple_results ? @child_results.reduce(:+) : @child_results.first)
       else
         push(state_machine, @children.shift, false)
       end

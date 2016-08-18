@@ -38,8 +38,8 @@ module Saxinator
     private
 
     # override to include attributes
-    def call_f(result)
-      @f.call(result, @attrs)
+    def call_f(r)
+      @f.call(r, @attrs)
     end
   end
 end

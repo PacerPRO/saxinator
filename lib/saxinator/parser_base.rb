@@ -45,7 +45,8 @@ module Saxinator
       when 1
         @root = @stack.first
       else
-        @root = @wrapper_klass.new(*@stack)
+        # TODO: don't always require returning result ...
+        @root = @wrapper_klass.new(*@stack, return_result: true, f: ->(x) { x })
       end
     end
 

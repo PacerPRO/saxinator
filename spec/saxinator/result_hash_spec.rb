@@ -37,6 +37,12 @@ module Saxinator
           it { expect(subject.inner_value).to eq({ a: 1, b: 'two', values: ['three', 4] }) }
         end
       end
+
+      context 'base value is itself a ResultHash' do
+        let(:base_value) { ResultHash.new({ a: 1, b: 'two', values: [] }) }
+
+        it { expect(subject.inner_value).to eq(base_value) }
+      end
     end
 
     describe '#+' do

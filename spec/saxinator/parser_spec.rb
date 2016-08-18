@@ -37,7 +37,7 @@ module Saxinator
         end
 
         it 'parses arbitrary text' do
-          expect(subject.parse('some arbitrary text')).to be_nil
+          expect { subject.parse('some arbitrary text') }.not_to raise_exception
         end
       end
 
@@ -54,7 +54,7 @@ module Saxinator
         end
 
         it 'parses given text' do
-          expect(subject.parse('hello')).to be_nil
+          expect { subject.parse('hello') }.not_to raise_exception
         end
       end
 
@@ -71,7 +71,7 @@ module Saxinator
         end
 
         it 'parses matching text' do
-          expect(subject.parse('the table is brown')).to be_nil
+          expect { subject.parse('the table is brown') }.not_to raise_exception
         end
       end
 
@@ -120,7 +120,7 @@ module Saxinator
       end
 
       it 'parses element with empty body' do
-        expect(subject.parse('<td></td>')).to be_nil
+        expect { subject.parse('<td></td>') }.not_to raise_exception
       end
 
       # TODO: allow tag_name patterns as well, and pass in tag_name to provided lambda ...
@@ -159,7 +159,20 @@ module Saxinator
       end
 
       it 'parses matching content' do
-        expect(subject.parse('hello <td></td>')).to be_nil
+        expect { subject.parse('hello <td></td>') }.not_to raise_exception
+      end
+
+      context 'lambdas are given' do
+        subject {
+          described_class.new do
+            text 'hello', -> (matches)       { matches[0]     }
+            tag 'td',     -> (_value, attrs) { attrs['width'] }
+          end
+        }
+
+        it 'parses matching content' do
+          expect(subject.parse('hello <td width="400"></td>')).to eq({ values: %w(hello 400) })
+        end
       end
     end
 
@@ -181,7 +194,7 @@ module Saxinator
       end
 
       it 'parses matching content' do
-        expect(subject.parse('<b>hello</b>')).to be_nil
+        expect { subject.parse('<b>hello</b>') }.not_to raise_exception
       end
     end
 
@@ -207,7 +220,7 @@ module Saxinator
       end
 
       it 'parses matching content' do
-        expect(subject.parse('<tr><td>hello</td><td>goodbye</td></tr>')).to be_nil
+        expect { subject.parse('<tr><td>hello</td><td>goodbye</td></tr>') }.not_to raise_exception
       end
     end
 
@@ -242,8 +255,8 @@ module Saxinator
       end
 
       it 'parses matching content' do
-        expect(subject.parse('<b>hello</b><b>there</b><b>friend</b>')).to be_nil
-        expect(subject.parse('<b>hello</b><b>friend</b>')).to be_nil
+        expect { subject.parse('<b>hello</b><b>there</b><b>friend</b>') }.not_to raise_exception
+        expect { subject.parse('<b>hello</b><b>friend</b>') }.not_to raise_exception
       end
 
       context 'there are multiple combinators underneath the #optional combinator' do
@@ -263,8 +276,8 @@ module Saxinator
         end
 
         it 'parses matching content' do
-          expect(subject.parse('<b>hello</b><b>there</b><b>my</b><b>friend</b>')).to be_nil
-          expect(subject.parse('<b>hello</b><b>friend</b>')).to be_nil
+          expect { subject.parse('<b>hello</b><b>there</b><b>my</b><b>friend</b>') }.not_to raise_exception
+          expect { subject.parse('<b>hello</b><b>friend</b>') }.not_to raise_exception
         end
       end
     end
@@ -295,9 +308,9 @@ module Saxinator
       end
 
       it 'parses matching content' do
-        expect(subject.parse('<b>hello</b><b>there</b><b>there</b><b>friend</b>')).to be_nil
-        expect(subject.parse('<b>hello</b><b>there</b><b>friend</b>')).to be_nil
-        expect(subject.parse('<b>hello</b><b>friend</b>')).to be_nil
+        expect { subject.parse('<b>hello</b><b>there</b><b>there</b><b>friend</b>') }.not_to raise_exception
+        expect { subject.parse('<b>hello</b><b>there</b><b>friend</b>') }.not_to raise_exception
+        expect { subject.parse('<b>hello</b><b>friend</b>') }.not_to raise_exception
       end
 
       context 'there are multiple combinators underneath the #star combinator' do
@@ -317,9 +330,11 @@ module Saxinator
         end
 
         it 'parses matching content' do
-          expect(subject.parse('<b>hello</b><b>there</b><b>my</b><b>there</b><b>my</b><b>friend</b>')).to be_nil
-          expect(subject.parse('<b>hello</b><b>there</b><b>my</b><b>friend</b>')).to be_nil
-          expect(subject.parse('<b>hello</b><b>friend</b>')).to be_nil
+          expect {
+            subject.parse('<b>hello</b><b>there</b><b>my</b><b>there</b><b>my</b><b>friend</b>')
+          }.not_to raise_exception
+          expect { subject.parse('<b>hello</b><b>there</b><b>my</b><b>friend</b>') }.not_to raise_exception
+          expect { subject.parse('<b>hello</b><b>friend</b>') }.not_to raise_exception
         end
       end
     end
@@ -354,8 +369,8 @@ module Saxinator
       end
 
       it 'parses matching content' do
-        expect(subject.parse('<b>hello</b><b>there</b><b>friend</b>')).to be_nil
-        expect(subject.parse('<b>hello</b><b>my</b><b>friend</b>')).to be_nil
+        expect { subject.parse('<b>hello</b><b>there</b><b>friend</b>') }.not_to raise_exception
+        expect { subject.parse('<b>hello</b><b>my</b><b>friend</b>') }.not_to raise_exception
       end
 
       # TODO ...

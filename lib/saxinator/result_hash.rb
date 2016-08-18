@@ -14,6 +14,8 @@ module Saxinator
           { values: base_value }
         when Hash
           { values: [] }.merge(base_value)
+        when ResultHash
+          base_value
         else
           { values: [base_value] }
         end
