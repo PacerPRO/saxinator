@@ -4,6 +4,10 @@ require './lib/saxinator/parser'
 module Saxinator
   RSpec.describe Parser do
     # TODO: test all default return results (e.g. 'text' returns nothing, 'optional' returns child value, etc...)
+    #       NOTE: for 'text', this requires a 'default' value for @f that discards the MatchData object; other
+    #             combinators may need a 'default' as well ...
+    # TODO?: combinators should allow lambdas taking 0 args ...
+    # TODO: *explicitly* test single-argument lambda support for 'tag' combinator ...
 
     context 'no block is supplied on creation' do
       it 'raises an error' do
@@ -323,24 +327,24 @@ module Saxinator
 
       context 'a lambda is given' do
         RSpec.shared_examples '#optional: a lambda is given' do |f|
-        subject {
-          described_class.new do
-            tag('b') { text 'hello', -> (_) { 'not me' } }
-            optional f do
-              tag('b') { text 'there', -> (_) { 'here I am!' } }
+          subject {
+            described_class.new do
+              tag('b') { text 'hello', -> (_) { 'not me' } }
+              optional f do
+                tag('b') { text 'there', -> (_) { 'here I am!' } }
+              end
+              tag('b') { text 'friend', -> (_) { 'not me either' } }
             end
-            tag('b') { text 'friend', -> (_) { 'not me either' } }
+          }
+
+          it 'returns the expected result' do
+            expect(subject.parse('<b>hello</b><b>there</b><b>friend</b>')).to eq(
+              { values: ['not me', 'here I am!', 'not me either'] }
+            )
+
+            expect(subject.parse('<b>hello</b><b>friend</b>')).to eq({ values: ['not me', 'not me either'] })
           end
-        }
-
-        it 'returns the expected result' do
-          expect(subject.parse('<b>hello</b><b>there</b><b>friend</b>')).to eq(
-            { values: ['not me', 'here I am!', 'not me either'] }
-          )
-
-          expect(subject.parse('<b>hello</b><b>friend</b>')).to eq({ values: ['not me', 'not me either'] })
         end
-      end
       end
 
       # test with and without lambda argument
