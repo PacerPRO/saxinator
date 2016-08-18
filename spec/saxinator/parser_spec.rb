@@ -321,7 +321,8 @@ module Saxinator
         end
       end
 
-      RSpec.shared_examples 'a lambda is given' do |f|
+      context 'a lambda is given' do
+        RSpec.shared_examples '#optional: a lambda is given' do |f|
         subject {
           described_class.new do
             tag('b') { text 'hello', -> (_) { 'not me' } }
@@ -340,10 +341,11 @@ module Saxinator
           expect(subject.parse('<b>hello</b><b>friend</b>')).to eq({ values: ['not me', 'not me either'] })
         end
       end
+      end
 
-      # test with lambda argument, and without
-      include_examples 'a lambda is given', -> (result) { result }
-      include_examples 'a lambda is given', nil
+      # test with and without lambda argument
+      include_examples '#optional: a lambda is given', -> (result) { result }
+      include_examples '#optional: a lambda is given', nil
     end
 
     context 'a #star combinator is given' do
@@ -400,6 +402,33 @@ module Saxinator
           expect { subject.parse('<b>hello</b><b>there</b><b>my</b><b>friend</b>') }.not_to raise_exception
           expect { subject.parse('<b>hello</b><b>friend</b>') }.not_to raise_exception
         end
+      end
+
+      context 'a lambda is given' do
+        RSpec.shared_examples '#star: a lambda is given' do |f|
+          # TODO: clean up when 'text' returns nil when no lambda given ...
+          subject {
+            described_class.new do
+              tag('b') { text 'hello', -> (_) { nil } }
+              star f do
+                tag('b') { text 'there', -> (_) { 'found me!' } }
+              end
+              tag('b') { text 'friend', -> (_) { nil } }
+            end
+          }
+
+          it 'returns the expected result' do
+            expect(subject.parse('<b>hello</b><b>there</b><b>there</b><b>friend</b>')).to eq(
+              { values: ['found me!', 'found me!'] }
+            )
+            expect(subject.parse('<b>hello</b><b>there</b><b>friend</b>')).to eq({ values: ['found me!'] })
+            expect(subject.parse('<b>hello</b><b>friend</b>')).to eq({ values: [] })
+          end
+        end
+
+        # test with and without lambda argument
+        include_examples '#star: a lambda is given', -> (result) { result }
+        include_examples '#star: a lambda is given', nil
       end
     end
 

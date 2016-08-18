@@ -40,11 +40,12 @@ module Saxinator
       @stack.push(Optional.new(subroot, return_result: true, f: f))
     end
 
-    def star(&block)
+    # TODO: do not always return result ...
+    def star(f = nil, &block)
       raise InvalidParserError, 'Invalid "star" element; please supply a block' unless block_given?
 
       subroot = Parser.new(&block).root
-      @stack.push(Star.new(subroot))
+      @stack.push(Star.new(subroot, return_result: true, f: f))
     end
 
     def any(&block)

@@ -22,8 +22,9 @@ module Saxinator
 
     def child_failed(state_machine)
       # child parse failed
-      # return results collected
-      finish(state_machine, @child_results)
+      # return sum of results collected
+      # TODO: dry with Sequence#shift_next_child ...
+      finish(state_machine, @child_results.empty? ? ResultHash.new(nil) : @child_results.reduce(:+))
     end
   end
 end
