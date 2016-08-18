@@ -3,6 +3,8 @@ require './lib/saxinator/parser'
 
 module Saxinator
   RSpec.describe Parser do
+    # TODO: test all default return results (e.g. 'text' returns nothing, 'optional' returns child value, etc...)
+
     context 'no block is supplied on creation' do
       it 'raises an error' do
         expect { described_class.new }.to raise_error(InvalidParserError)

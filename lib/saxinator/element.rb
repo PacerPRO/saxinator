@@ -37,7 +37,7 @@ module Saxinator
 
     private
 
-    # override to include attributes
+    # override of base method to include attributes
     # TODO: somehow make it so @f doesn't have to take @attrs as an argument ...
     def call_f(r)
       @f.call(r, @attrs)
