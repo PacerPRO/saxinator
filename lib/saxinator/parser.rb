@@ -48,8 +48,9 @@ module Saxinator
       @stack.push(Star.new(subroot, return_result: true, f: f))
     end
 
-    def any(&block)
-      subroot = ParserAnyBlock.new(Choice, &block).root
+    # TODO: do not always return result ...
+    def any(f = nil, &block)
+      subroot = ParserAnyBlock.new(Choice, return_result: true, f: f, &block).root
       @stack.push(subroot)
     end
   end

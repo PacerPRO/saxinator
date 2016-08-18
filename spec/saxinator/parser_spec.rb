@@ -470,6 +470,35 @@ module Saxinator
         expect { subject.parse('<b>hello</b><b>my</b><b>friend</b>') }.not_to raise_exception
       end
 
+      context 'a lambda is given' do
+        RSpec.shared_examples '#any: a lambda is given' do |f|
+          # TODO: clean up when 'text' returns nil when no lambda given ...
+          subject {
+            described_class.new do
+              tag('b') { text 'hello', -> (_) { nil } }
+              tag('b') do
+                any f do
+                  try { text 'there', -> (matches)  { matches[0] } }
+                  try -> (result) { "oh #{result[:values].first}" } do
+                    text 'my', -> (matches) { matches[0] }
+                  end
+                end
+              end
+              tag('b') { text 'friend', -> (_) { nil } }
+            end
+          }
+
+          it 'returns the expected result' do
+            expect(subject.parse('<b>hello</b><b>there</b><b>friend</b>')).to eq({ values: ['there'] })
+            expect(subject.parse('<b>hello</b><b>my</b><b>friend</b>')).to eq({ values: ['oh my'] })
+          end
+        end
+
+        # test with and without lambda argument
+        include_examples '#any: a lambda is given', -> (result) { result }
+        include_examples '#any: a lambda is given', nil
+      end
+
       # TODO ...
     end
   end

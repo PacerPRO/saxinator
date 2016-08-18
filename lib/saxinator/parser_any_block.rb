@@ -4,11 +4,12 @@ require_relative 'parser_base'
 module Saxinator
   class ParserAnyBlock < ::Saxinator::ParserBase
     # combinators
-    def try(&block)
+    def try(f = nil, &block)
       raise InvalidParserError, 'Invalid "try" section; please supply a block' unless block_given?
 
       subroot = Parser.new(&block).root
-      @stack.push(Choice.new(subroot))
+      # TODO: does not always return result ...
+      @stack.push(Choice.new(subroot, return_result: true, f: f))
     end
 
 
