@@ -236,6 +236,30 @@ module Saxinator
       it 'parses matching content' do
         expect { subject.parse('<tr><td>hello</td><td>goodbye</td></tr>') }.not_to raise_exception
       end
+
+      context 'lambdas are given' do
+        subject {
+          described_class.new do
+            tag 'tr', -> (result, attrs) { result.merge(attrs) } do
+              tag 'td' do
+                text 'hello', -> (matches) { matches[0] }
+              end
+              tag 'td' do
+                text 'goodbye', -> (matches) { matches[0] }
+              end
+            end
+          end
+        }
+
+        it 'returns the expected result' do
+          expect(subject.parse(<<-HTML)).to eq({ 'width' => '100', 'height' => '200', values: %w(hello goodbye) })
+            <tr width="100" height="200">
+              <td>hello</td>
+              <td>goodbye</td>
+            </tr>
+          HTML
+        end
+      end
     end
 
     # TODO: recognize text, optional, text
