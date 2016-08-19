@@ -41,7 +41,7 @@ module Saxinator
       context 'base value is itself a ResultHash' do
         let(:base_value) { ResultHash.new({ a: 1, b: 'two', values: [] }) }
 
-        it { expect(subject.inner_value).to eq(base_value) }
+        it { expect(subject.inner_value).to eq(base_value.inner_value) }
       end
     end
 
