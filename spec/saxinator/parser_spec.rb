@@ -408,14 +408,13 @@ module Saxinator
 
       context 'a lambda is given' do
         RSpec.shared_examples '#star: a lambda is given' do |f|
-          # TODO: clean up when 'text' returns nil when no lambda given ...
           subject {
             described_class.new do
-              tag('b') { text 'hello', -> (_) { nil } }
+              tag('b') { text 'hello' }
               star f do
                 tag('b') { text 'there', -> (_) { 'found me!' } }
               end
-              tag('b') { text 'friend', -> (_) { nil } }
+              tag('b') { text 'friend' }
             end
           }
 
@@ -475,7 +474,7 @@ module Saxinator
           # TODO: clean up when 'text' returns nil when no lambda given ...
           subject {
             described_class.new do
-              tag('b') { text 'hello', -> (_) { nil } }
+              tag('b') { text 'hello' }
               tag('b') do
                 any f do
                   try { text 'there', -> (matches)  { matches[0] } }
@@ -484,7 +483,7 @@ module Saxinator
                   end
                 end
               end
-              tag('b') { text 'friend', -> (_) { nil } }
+              tag('b') { text 'friend' }
             end
           }
 
@@ -591,7 +590,7 @@ module Saxinator
         }
 
         it 'returns results of the successfully parsed "try" section' do
-          expect(subject.parse('<b>first</b>')).to eq({ values: ['first']  })
+          expect(subject.parse('<b>first</b>')).to  eq({ values: ['first']  })
           expect(subject.parse('<b>second</b>')).to eq({ values: ['second'] })
         end
       end
