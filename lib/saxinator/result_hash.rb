@@ -32,10 +32,17 @@ module Saxinator
     private
 
     def self.from_inner_value(inner_value)
-      r = ResultHash.new(nil)
+      r = ResultHash(nil)
       r.instance_eval { @inner_value = inner_value }
 
       r
     end
   end
+end
+
+# ...
+# TODO: any way to somehow put this in the Saxinator module but still be able to call it without using fully
+#       qualified name?
+def ResultHash(base_value)
+  base_value.is_a?(::Saxinator::ResultHash) ? base_value : ::Saxinator::ResultHash.new(base_value)
 end

@@ -67,7 +67,7 @@ module Saxinator
     end
 
     def call_f_and_hashify(value)
-      ResultHash.new(@f ? call_f(value) : value)
+      ResultHash(@f ? call_f(value) : value)
     end
 
     def get_inner_value(result)

@@ -4,7 +4,7 @@ require './lib/saxinator/result_hash'
 module Saxinator
   RSpec.describe ResultHash do
     describe '#initialize' do
-      subject { ResultHash.new(base_value) }
+      subject { ResultHash(base_value) }
 
       context 'base value is nil' do
         let(:base_value) { nil }
@@ -39,7 +39,7 @@ module Saxinator
       end
 
       context 'base value is itself a ResultHash' do
-        let(:base_value) { ResultHash.new({ a: 1, b: 'two', values: [] }) }
+        let(:base_value) { ResultHash({ a: 1, b: 'two', values: [] }) }
 
         it { expect(subject.inner_value).to eq(base_value.inner_value) }
       end
