@@ -42,9 +42,7 @@ module Saxinator
 
     # override of base method to return text matched by capture groups
     def default_f(matches)
-      # TODO: dry ResultHash summation ...
-      r = matches.captures.map { |s| ResultHash.new(s) }
-      r.length > 1 ? r.reduce(:+) : ResultHash.new(nil)
+      ResultHash.sum(matches.captures.map { |s| ResultHash.new(s) })
     end
   end
 end

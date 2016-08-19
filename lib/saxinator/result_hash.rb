@@ -29,6 +29,10 @@ module Saxinator
       self.class.from_inner_value(r)
     end
 
+    def self.sum(result_hashes)
+      result_hashes.length > 0 ? result_hashes.reduce(:+) : ResultHash.new(nil)
+    end
+
     private
 
     def self.from_inner_value(inner_value)

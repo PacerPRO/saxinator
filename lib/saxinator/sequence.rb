@@ -23,8 +23,7 @@ module Saxinator
 
     def shift_next_child(state_machine)
       if @children.empty?
-        # TODO: what if @child_results.empty? ...
-        finish(state_machine, @child_results.reduce(:+))
+        finish(state_machine, ResultHash.sum(@child_results))
       else
         push(state_machine, @children.shift, false)
       end

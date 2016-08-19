@@ -45,6 +45,20 @@ module Saxinator
       end
     end
 
+    describe '.sum' do
+      it { expect(ResultHash.sum([]).inner_value).to eq(ResultHash.new(nil).inner_value) }
+
+      it { expect(ResultHash.sum([
+        ResultHash.new({ values: ['hello'] }),
+      ]).inner_value).to eq(ResultHash.new(['hello']).inner_value) }
+
+      it { expect(ResultHash.sum([
+        ResultHash.new({ values: ['first'] }),
+        ResultHash.new({ values: ['second'] }),
+        ResultHash.new({ values: ['third'] }),
+      ]).inner_value).to eq(ResultHash.new(%w(first second third)).inner_value) }
+    end
+
     describe '#+' do
       let(:x_result) { ResultHash.from_inner_value(x) }
       let(:y_result) { ResultHash.from_inner_value(y) }
