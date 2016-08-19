@@ -67,7 +67,7 @@ module Saxinator
     end
 
     def call_f_and_hashify(value)
-      ResultHash(@f ? call_f(value) : value)
+      ResultHash(@f ? call_f(value) : default_f(value))
     end
 
     def get_inner_value(result)
@@ -77,6 +77,12 @@ module Saxinator
     # overridable
     def call_f(r)
       @f.call(r)
+    end
+
+    # overridable
+    def default_f(value)
+      # by default, return the value
+      value
     end
   end
 end

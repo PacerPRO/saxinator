@@ -32,11 +32,19 @@ module Saxinator
       finish(state_machine, matches)
     end
 
+
     private
 
     def push_new_child(state_machine)
       # child will get a block of characters, or raise on failure
       push(state_machine, CharacterBlock.new(return_result: true, f: -> (x) { x }), true)
+    end
+
+    # override of base method to return text matched by capture groups
+    def default_f(matches)
+      # TODO: dry ResultHash summation ...
+      r = matches.captures.map { |s| ResultHash.new(s) }
+      r.length > 1 ? r.reduce(:+) : ResultHash.new(nil)
     end
   end
 end

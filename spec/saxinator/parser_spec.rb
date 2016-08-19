@@ -3,9 +3,6 @@ require './lib/saxinator/parser'
 
 module Saxinator
   RSpec.describe Parser do
-    # TODO: test all default return results (e.g. 'text' returns nothing, 'optional' returns child value, etc...)
-    #       NOTE: for 'text', this requires a 'default' value for @f that discards the MatchData object; other
-    #             combinators may need a 'default' as well ...
     # TODO?: combinators should allow lambdas taking 0 args ...
     # TODO: *explicitly* test single-argument lambda support for 'tag' combinator ...
 
@@ -270,6 +267,7 @@ module Saxinator
 
     # TODO: recognize text, optional, text
     # TODO:   (really, just need to recognize text, text) ...
+    #         once this is done, get rid of all of the extraneous tag('b', ...) wrappers in the tests ...
 
     # TODO: allow for a range, e.g. range(1, 5)
     context 'an #optional combinator is given' do
@@ -460,6 +458,8 @@ module Saxinator
         end
       end
 
+      # TODO: what if no "try" sections are given?
+
       it 'raises an error on non-matching content' do
         expect { subject.parse('<b>hello</b><b>best</b><b>friend</b>') }.to raise_error(ParseFailureError)
         expect { subject.parse('<b>hello</b><b>friend</b>') }.to raise_error(ParseFailureError)
@@ -501,5 +501,102 @@ module Saxinator
 
       # TODO ...
     end
+
+    context 'default return results' do
+      describe '#text' do
+        context 'there are no capture groups' do
+          subject {
+            described_class.new do
+              text 'hello'
+            end
+          }
+
+          it 'returns "nil" result' do
+            expect(subject.parse('hello')).to eq({ values: [] })
+          end
+        end
+
+        context 'there are capture groups' do
+          subject {
+            described_class.new do
+              text /hello (\w+) and (\w+)/
+            end
+          }
+
+          it 'returns captured results' do
+            expect(subject.parse('hello Steve and Jane')).to eq({ values: %w(Steve Jane) })
+          end
+        end
+      end
+
+      describe '#element' do
+        subject {
+          described_class.new do
+            tag 'td' do
+              tag('b', -> (result) { result }) { text 'hi',    -> (matches) { matches[0] } }
+              tag('b', -> (result) { result }) { text 'there', -> (matches) { matches[0] } }
+            end
+          end
+        }
+
+        it 'returns results of parsing child elements' do
+          expect(subject.parse('<td><b>hi</b><b>there</b></td>')).to eq({ values: %w(hi there) })
+        end
+      end
+
+      describe '#optional' do
+        subject {
+          described_class.new do
+            optional do
+              tag('b', -> (result) { result }) { text 'hi', -> (matches) { matches[0] } }
+            end
+          end
+        }
+
+        it 'if the optional element is present, returns results of parsing the optional element' do
+          expect(subject.parse('<b>hi</b>')).to eq({ values: ['hi'] })
+        end
+
+        it 'if the optional element is absent, returns "nil"' do
+          expect(subject.parse('')).to eq({ values: [] })
+        end
+      end
+
+      describe '#star' do
+        subject {
+          described_class.new do
+            star do
+              tag('b', -> (result) { result }) { text 'hi', -> (matches) { matches[0] } }
+            end
+          end
+        }
+
+        it 'returns results of parsing the child elements' do
+          expect(subject.parse('<b>hi</b><b>hi</b><b>hi</b><b>hi</b>')).to eq({ values: %w(hi hi hi hi) })
+        end
+      end
+
+      describe '#any' do
+        subject {
+          described_class.new do
+            any do
+              try(-> (result) { result }) {
+                tag('b', -> (result) { result }) { text 'first',  -> (matches) { matches[0] } }
+              }
+              try(-> (result) { result }) {
+                tag('b', -> (result) { result }) { text 'second', -> (matches) { matches[0] } }
+              }
+            end
+          end
+        }
+
+        it 'returns results of the successfully parsed "try" section' do
+          expect(subject.parse('<b>first</b>')).to eq({ values: ['first']  })
+          expect(subject.parse('<b>second</b>')).to eq({ values: ['second'] })
+        end
+      end
+    end
+
+    # TODO: #try, in separate spec for the "#any" parser ...
   end
 end
