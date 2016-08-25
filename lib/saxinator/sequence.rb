@@ -25,8 +25,22 @@ module Saxinator
       if @children.empty?
         finish(state_machine, ResultHash.sum(@child_results))
       else
-        push(state_machine, @children.shift, false)
+        next_child = @children.shift
+        if next_child.is_a?(Text) && @children.first.is_a?(Text)
+          shift_multi_text(state_machine, next_child)
+        else
+          push(state_machine, next_child, false)
+        end
       end
+    end
+
+    def shift_multi_text(state_machine, next_child)
+      texts = [next_child, @children.shift]
+      while @children.first.is_a?(Text)
+        texts.push(@children.shift)
+      end
+
+      push(state_machine, Text.new_multi_text(texts), false)
     end
   end
 end

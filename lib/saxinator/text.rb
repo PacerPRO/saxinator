@@ -3,6 +3,8 @@ require_relative 'combinator'
 
 module Saxinator
   class Text < ::Saxinator::Combinator
+    attr_reader :pattern, :f
+
     def initialize(pattern, return_result: false, f: nil)
       super
       @pattern = pattern
@@ -30,6 +32,16 @@ module Saxinator
       end
 
       finish(state_machine, matches)
+    end
+
+
+    def self.new_multi_text(texts)
+      # TODO: don't just return first text - actually combine them ...
+      combined_pattern = texts.map(&:pattern).join
+
+      # TODO: pass f; don't always assume return_result is true ...
+      # TODO?: intersperse whitespace ...
+      Text.new(combined_pattern, return_result: true)
     end
 
 

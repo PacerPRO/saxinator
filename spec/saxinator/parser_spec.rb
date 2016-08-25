@@ -103,6 +103,27 @@ module Saxinator
       end
     end
 
+    context 'multiple #text combinators are given' do
+      subject {
+        described_class.new do
+          text(/my favorite color is (\w+), whereas/)
+          text(/ your favorite color is (\w+)/)
+        end
+      }
+
+      # TODO: test parse failure ...
+
+      it 'succeeds on valid content' do
+        expect(subject.parse(<<-HTML)).to eq({ values: %w(blue green) })
+          my favorite color is blue, whereas your favorite color is green
+        HTML
+      end
+
+      # TODO: test combinations of modifiers (e.g. 'i' is on one of the patterns but not the other)
+      # TODO: test distinct functions on the #text combinators ...
+    end
+
+
     context 'a single element combinator is given' do
       subject {
         described_class.new do
