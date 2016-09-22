@@ -38,6 +38,11 @@ module Saxinator
     def self.new_multi_text(texts)
       # TODO: don't just return first text - actually combine them ...
       combined_pattern = texts.map(&:pattern).join
+      fs               = texts.map(&:f)
+
+      combined_f = -> (matches) do
+
+      end
 
       # TODO: pass f; don't always assume return_result is true ...
       # TODO?: intersperse whitespace ...

@@ -120,7 +120,22 @@ module Saxinator
       end
 
       # TODO: test combinations of modifiers (e.g. 'i' is on one of the patterns but not the other)
+
       # TODO: test distinct functions on the #text combinators ...
+      context 'the combinators have distinct functions' do
+        subject {
+          described_class.new do
+            text(/my favorite color is (\w+), whereas/, -> (matches) { matches[0].downcase })
+            text(/ your favorite color is (\w+)/, -> (matches) { matches[0].upcase })
+          end
+        }
+
+        it 'applies the functions as expected' do
+          expect(subject.parse(<<-HTML)).to eq({ values: %w(blue GREEN) })
+            my favorite color is Blue, whereas your favorite color is Green
+          HTML
+        end
+      end
     end
 
 
